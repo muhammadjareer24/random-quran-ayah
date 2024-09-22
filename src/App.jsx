@@ -8,42 +8,60 @@ function App() {
   const [currentAyah, setCurrentAyah] = useState("")
   const [currentReference, setCurrentReference] = useState("")
 
+  const [info, setInfo] = useState(null)
+
   const url =
-    "https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/eng-muftitaqiusmani.json"
+    "https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/eng-muftitaqiusmani.min.json"
+
+  const infoUrl =
+    "https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/info.json"
 
   useEffect(() => {
-    const fetchAyahs = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(url)
-        const data = await response.json()
+        // Fetch Ayahs
+        const ayahsResponse = await fetch(url)
+        const ayahsData = await ayahsResponse.json()
 
-        console.log("ayah", data)
+        setAyahs(ayahsData.quran)
 
-        setAyahs(data.quran)
-        displayRandomAyah(data.quran)
+        // Fetch Info
+        const infoResponse = await fetch(infoUrl)
+        const infoData = await infoResponse.json()
+
+        setInfo(infoData)
+        displayRandomAyah(ayahsData.quran, infoData)
       } catch (error) {
         console.log("Error in fetch request", error)
       }
     }
 
-    fetchAyahs()
+    fetchData()
   }, [])
 
-  const displayRandomAyah = (ayahsArray) => {
+  const displayRandomAyah = (ayahsArray, infoData) => {
     const randomIndex = Math.floor(Math.random() * ayahsArray.length)
 
     const randomAyah = ayahsArray[randomIndex]
 
+    const chapterInfo = infoData.chapters.find(
+      (chapter) => chapter.chapter === randomAyah.chapter
+    )
+
+    const chapterName = chapterInfo.name
+
     setCurrentAyah(randomAyah.text)
-    setCurrentReference(`${randomAyah.chapter} : ${randomAyah.verse}`)
+    setCurrentReference(
+      `${chapterName} (${randomAyah.chapter}:${randomAyah.verse})`
+    )
   }
 
   const handleNewAyah = () => {
-    displayRandomAyah(ayahs)
+    displayRandomAyah(ayahs, info)
   }
 
   const coptToClipboard = () => {
-    const copyText = `Ayah: ${currentAyah}\nReference:  ${currentReference}`
+    const copyText = `Ayah: ${currentAyah}\nReference: ${currentReference}`
 
     navigator.clipboard
       .writeText(copyText)
