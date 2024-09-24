@@ -113,7 +113,8 @@ function App() {
                 id="whatsappBtn"
                 onClick={handleWhatsAppShare}
               >
-                <i className="fa-brands fa-whatsapp mr-2"></i> WhatsApp
+                <i className="fa-brands fa-whatsapp text-xl"></i>
+                <span className="hidden xs:block ml-2">WhatsApp</span>
               </button>
             </div>
           </div>

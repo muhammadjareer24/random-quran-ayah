@@ -6,6 +6,9 @@ export default {
       colors: {
         "background-color": "#f9fafb",
       },
+      screens: {
+        xs: "400px",
+      },
     },
   },
   plugins: [],
