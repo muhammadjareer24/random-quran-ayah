@@ -1,40 +1,19 @@
-import { useEffect, useState } from "react"
 import "./App.css"
 import "./index.css"
 
-import { AyahType, InfoType } from "./types"
-import getRandomItems from "./utils/getRandomItems"
 import useData from "./hook/useData"
 import Controls from "./components/Controls"
 import Display from "./components/Display"
 
 function App() {
-  const { ayahs, info, loading, error } = useData()
-
-  const [currentAyah, setCurrentAyah] = useState("")
-  const [currentReference, setCurrentReference] = useState("")
-
-  const displayRandomAyah = (ayahsArray: AyahType[], infoData: InfoType[]) => {
-    const randomAyah = getRandomItems(ayahsArray)
-    const chapterInfo = infoData.chapters.find(
-      (chapter) => chapter.chapter === randomAyah.chapter
-    )
-    const chapterName = chapterInfo.name
-    if (randomAyah) {
-      setCurrentAyah(randomAyah.text)
-      setCurrentReference(
-        `${chapterName} (${randomAyah.chapter}:${randomAyah.verse})`
-      )
-    }
-  }
-
-  useEffect(() => {
-    displayRandomAyah(ayahs, info)
-  }, [])
-
-  const getNewAyah = () => {
-    displayRandomAyah(ayahs, info)
-  }
+  const {
+    currentAyah,
+    currentReference,
+    loading,
+    error,
+    getNewAyah,
+    animationKey,
+  } = useData()
 
   const handleCopy = () => {
     const copyText = `Ayah: ${currentAyah}\nReference: ${currentReference}`
@@ -74,7 +53,8 @@ function App() {
         <p className="mb-8 text-2xl">A source of peace and reflection ❤</p>
         <div
           id="quote-box"
-          className=" mx-5 p-5 font-semibold text-lg bg-white text-center rounded-lg shadow-lg space-y-4"
+          key={animationKey}
+          className=" mx-5 p-5 font-semibold text-lg bg-white text-center rounded-lg shadow-lg space-y-4 animate-fade-in"
         >
           <Display
             currentAyah={currentAyah}
@@ -83,7 +63,7 @@ function App() {
 
           <Controls
             onNewAyah={getNewAyah}
-            onCopy={handleCopy}
+            onCopyAyah={handleCopy}
             onWhatsAppShare={handleWhatsAppShare}
           />
         </div>
